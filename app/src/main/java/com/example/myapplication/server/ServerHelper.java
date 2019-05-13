@@ -26,10 +26,7 @@ public class ServerHelper {
     public ServerHelper(Context context) {
         mServerAddress = null;
         mQueue = Volley.newRequestQueue(context);
-    }
 
-    public void start() {
-        requestCraneLoadData(0);
     }
 
     public void setAddress(String address) {
@@ -37,40 +34,41 @@ public class ServerHelper {
         Log.d(TAG, "Setting server address to " + address);
     }
 
-    private void requestCraneLoadData(long minimumTime) {
-        Log.d(TAG, "requestCraneLoadData");
+
+    public void requestCycleData(int amount, long minimumTime, final CraneDataListener listener) {
         final Gson gson = new GsonBuilder().create();
 
         // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, mServerAddress + "/steps/" + minimumTime,
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, mServerAddress + "/cycles/" + amount + "/" + minimumTime,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         Log.d(TAG, response);
+
 
                         JsonArray array = (JsonArray) new JsonParser().parse(response);
                         List<CycleLoadData> newBatch = new ArrayList<>();
                         for (int i = 0; i < array.size(); i++) {
                             newBatch.add(gson.fromJson(array.get(i).toString(), CycleLoadData.class));
                         }
-                        //mCraneDataListener.onBatch(newBatch);
+                        listener.onCycleLoadData(newBatch);
 
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, error.toString());
+                Log.d(TAG, "Cycle: " + error.toString());
             }
         });
 
         mQueue.add(stringRequest);
     }
 
-    public void requestCycleRows(int amount, long minimumTime, final CraneDataListener listener) {
+    public void requestSensorData(int amount, long minimumTime, final CraneDataListener listener) {
         final Gson gson = new GsonBuilder().create();
 
         // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://192.168.1.27:5000/steps/" + amount + "/" + minimumTime,
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, mServerAddress + "/sensor/" + amount + "/" + minimumTime,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -78,17 +76,17 @@ public class ServerHelper {
 
 
                         JsonArray array = (JsonArray) new JsonParser().parse(response);
-                        List<CycleLoadData> newBatch = new ArrayList<>();
+                        List<SensorData> newBatch = new ArrayList<>();
                         for (int i = 0; i < array.size(); i++) {
-                            newBatch.add(gson.fromJson(array.get(i).toString(), CycleLoadData.class));
+                            newBatch.add(gson.fromJson(array.get(i).toString(), SensorData.class));
                         }
-                        listener.onBatch(newBatch);
+                        listener.onSensorData(newBatch);
 
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, error.toString());
+                Log.d(TAG, "Sensor: " + error.toString());
             }
         });
 
@@ -96,11 +94,10 @@ public class ServerHelper {
     }
 
     public interface CraneDataListener {
-        void onBatch(List<CycleLoadData> newBatch);
 
-        void showing();
+        void onCycleLoadData(List<CycleLoadData> newBatch);
 
+        void onSensorData(List<SensorData> newBatch);
     }
-
 
 }
