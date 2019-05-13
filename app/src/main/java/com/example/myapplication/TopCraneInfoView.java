@@ -9,6 +9,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.myapplication.server.CycleLoadData;
+import com.example.myapplication.server.SensorData;
+import com.squareup.picasso.Picasso;
 
 public class TopCraneInfoView extends RelativeLayout {
 
@@ -18,8 +20,14 @@ public class TopCraneInfoView extends RelativeLayout {
     private TextView mCycleNumber;
     private TextView mEventTime;
     private TextView mLoadType;
-    private View mCraneHeight;
-    private View mCraneWeight;
+    private TextView mCraneHeight;
+    private TextView mCraneWeight;
+
+
+    public static String[] STEP_NAME = new String[]{"movement toward the load",
+            "load rigging",
+            "movement with the load toward the destination",
+            "unrigging of the load at the destination"};
 
     public TopCraneInfoView(Context context) {
         super(context);
@@ -51,18 +59,22 @@ public class TopCraneInfoView extends RelativeLayout {
     }
 
 
-    public void setCycleRow(CycleLoadData craneRow){
-        //Picasso.get().load('').into(mCraneImage);
-        mCraneNumber.setText(String.valueOf(craneRow.crane_id));
-        //mStepName.setText(craneRow.load_type_name);
-        mCycleNumber.setText(String.valueOf(craneRow.step_num));
-        mLoadType.setText(craneRow.load_type_name);
-        //mCraneHeight
-        //mCraneWeight
+    public void setSensorData(SensorData sensorData) {
+        Picasso.get().load(sensorData.image_url).into(mCraneImage);
+        mCraneHeight.setText(sensorData.acc_az + "");
+        mCraneWeight.setText(sensorData.weight +"");
+    }
+
+    public void setCycleRow(CycleLoadData cycleLoadData) {
+        mCraneNumber.setText(String.valueOf(cycleLoadData.crane_id));
+        mStepName.setText(STEP_NAME[cycleLoadData.step_num]);
+        mCycleNumber.setText(String.valueOf(cycleLoadData.step_num));
+        mLoadType.setText(cycleLoadData.load_type_name);
+
     }
 
 
     public void setEventTime(long time) {
-        mEventTime.setText(time+"");
+        mEventTime.setText(time + "");
     }
 }

@@ -15,16 +15,18 @@ import java.util.TimerTask;
 public class CraneViewController implements ServerHelper.CraneDataListener {
 
     private static final String TAG = CraneViewController.class.getSimpleName();
-    private static final int MIN_SIZE = 1;
+    private static final int MIN_SIZE = 20;
+    public static final float SECOND_WEIGHT = 1.0f;
     public static long NO_TIME = 0;
+    private long mCurrentTime = NO_TIME;
 
     // Views
     private final TopCraneInfoView mTopCraneInfoView;
     // Data
     private final ServerHelper mServerHelper;
-    private long mCurrentTime = NO_TIME;
     private List<CycleLoadData> mCycleLoadDatas = new ArrayList<>();
-
+    private List<SensorData> mSensorDatas = new ArrayList<>();
+    // utils
     private Timer mTimer;
     private final Context mContext;
     private final Handler mUiHandler;
@@ -41,14 +43,16 @@ public class CraneViewController implements ServerHelper.CraneDataListener {
         if (!mCycleLoadDatas.isEmpty()) {
             Log.d(TAG, "Incrementing time " + mCurrentTime);
 
-            if(mCurrentTime == NO_TIME){
+            if (mCurrentTime == NO_TIME) {
                 Log.d(TAG, "First run...");
                 moveToNextCycle();
+                refreshSensorData();
             }
 
             if (shouldMoveFromLastCycle()) {
                 mCycleLoadDatas.remove(0);
                 moveToNextCycle();
+                refreshSensorData();
             }
 
 
@@ -60,15 +64,14 @@ public class CraneViewController implements ServerHelper.CraneDataListener {
     }
 
     private boolean shouldMoveFromLastCycle() {
-        return mCurrentTime != NO_TIME && !mCycleLoadDatas.isEmpty() && mCurrentTime > mCycleLoadDatas.get(0).step_end_time;
+        return mCurrentTime != NO_TIME && !mCycleLoadDatas.isEmpty() && mCurrentTime >= mCycleLoadDatas.get(0).step_end_time;
     }
 
     private void moveToNextCycle() {
         final int cyclesSize = mCycleLoadDatas.size();
         if (cyclesSize > 0) {
-            if (cyclesSize < MIN_SIZE) {
-                askForMore(mCycleLoadDatas.get(cyclesSize - 1).step_end_time);
-            }
+
+            tryAskForMore();
 
             CycleLoadData cycleRow = mCycleLoadDatas.get(0);
             Log.d(TAG, "Setting cycle (" + cycleRow + ")");
@@ -84,10 +87,33 @@ public class CraneViewController implements ServerHelper.CraneDataListener {
         }
     }
 
+    private void refreshSensorData() {
+        if (!mSensorDatas.isEmpty()) {
+            SensorData sensorData = mSensorDatas.get(0);
+            while (mCurrentTime > sensorData.event_time_stamp && !mSensorDatas.isEmpty()) {
+                mSensorDatas.remove(0);
+            }
 
-    private void askForMore(long time) {
-        Log.d(TAG, "Asking for more " + MIN_SIZE + " - " + time);
-        mServerHelper.requestCycleRows(MIN_SIZE, time, this);
+            if(!mSensorDatas.isEmpty()){
+                sensorData = mSensorDatas.get(0);
+                Log.d(TAG, "Setting sensor (" +sensorData + ")");
+                mTopCraneInfoView.setSensorData(sensorData);
+            }
+        }
+    }
+
+
+    private void tryAskForMore() {
+        if (mCycleLoadDatas.size() < MIN_SIZE) {
+            long timeToAsk = mCycleLoadDatas.isEmpty() ? mCurrentTime : mCycleLoadDatas.get(mCycleLoadDatas.size() - 1).step_end_time;
+            Log.d(TAG, "Asking for more cycles" + MIN_SIZE + " - " + timeToAsk);
+            mServerHelper.requestCycleData(MIN_SIZE, timeToAsk, this);
+        }
+
+        if (mSensorDatas.size() < MIN_SIZE) {
+            Log.d(TAG, "Asking for more sensor data" + MIN_SIZE + " - " + mCurrentTime);
+            mServerHelper.requestSensorData(MIN_SIZE, mCurrentTime, this);
+        }
     }
 
     public void startStop() {
@@ -101,7 +127,7 @@ public class CraneViewController implements ServerHelper.CraneDataListener {
     private void start() {
         if (mCycleLoadDatas.isEmpty()) {
             mNeedsToStart = true;
-            askForMore(mCurrentTime);
+            tryAskForMore();
         } else {
             startTimer();
         }
@@ -127,12 +153,12 @@ public class CraneViewController implements ServerHelper.CraneDataListener {
                 });
 
             }
-        }, 0, 1000);
+        }, 0, (long) (1000 * SECOND_WEIGHT));
     }
 
 
     @Override
-    public void onBatch(List<CycleLoadData> newBatch) {
+    public void onCycleLoadData(List<CycleLoadData> newBatch) {
         Log.d(TAG, "Got " + newBatch.size() + " Cycels (nts=" + mNeedsToStart + ")");
         mCycleLoadDatas.addAll(newBatch);
         if (mNeedsToStart) {
@@ -142,8 +168,9 @@ public class CraneViewController implements ServerHelper.CraneDataListener {
     }
 
     @Override
-    public void showing() {
-
+    public void onSensorData(List<SensorData> newBatch) {
+        Log.d(TAG, "Got " + newBatch.size() + " sensor (nts=" + mNeedsToStart + ")");
+        mSensorDatas.addAll(newBatch);
     }
 
 }
