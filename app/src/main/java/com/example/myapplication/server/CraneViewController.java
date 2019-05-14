@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.myapplication.SensorGraphViewsHelper;
 import com.example.myapplication.TopCraneInfoView;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class CraneViewController implements ServerHelper.CraneDataListener {
     private long mCurrentTime = NO_TIME;
 
     // Views
+    private final SensorGraphViewsHelper mSensorGraphViewsHelper;
     private final TopCraneInfoView mTopCraneInfoView;
     // Data
     private final ServerHelper mServerHelper;
@@ -33,11 +35,12 @@ public class CraneViewController implements ServerHelper.CraneDataListener {
     private final Handler mUiHandler;
     private boolean mNeedsToStart;
 
-    public CraneViewController(Context context, TopCraneInfoView topCraneInfoView, Handler uiHandler, ServerHelper serverHelper) {
+    public CraneViewController(Context context, TopCraneInfoView topCraneInfoView, SensorGraphViewsHelper sensorGraphViewsHelper, Handler uiHandler, ServerHelper serverHelper) {
         mUiHandler = uiHandler;
         mTopCraneInfoView = topCraneInfoView;
         mContext = context;
         mServerHelper = serverHelper;
+        mSensorGraphViewsHelper = sensorGraphViewsHelper;
     }
 
     private void tick() {
@@ -94,7 +97,7 @@ public class CraneViewController implements ServerHelper.CraneDataListener {
             int removed = 0;
             while (sensorIter.hasNext()) {
                 SensorData sensorData = sensorIter.next();
-                if(mCurrentTime != sensorData.event_timestamp ) {
+                if(mCurrentTime > sensorData.event_timestamp ) {
                     sensorIter.remove();
                     removed++;
                 } else{
@@ -106,8 +109,13 @@ public class CraneViewController implements ServerHelper.CraneDataListener {
 
             if (!mSensorDatas.isEmpty()) {
                 SensorData sensorData = mSensorDatas.get(0);
-                Log.d(TAG, "Setting sensor (" + sensorData + ")");
-                mTopCraneInfoView.setSensorData(sensorData);
+                if(sensorData.event_timestamp == mCurrentTime) {
+                    Log.d(TAG, "Setting sensor (" + sensorData + ")");
+                    mTopCraneInfoView.setSensorData(sensorData);
+                    mSensorGraphViewsHelper.setCurrentSensorData(mSensorDatas);
+                } else{
+                    Log.d(TAG, "Sensor data is ahead of current time");
+                }
             }
         }
     }

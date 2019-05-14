@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/colorBackground"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity">
@@ -11,8 +11,21 @@
     <com.example.myapplication.TopCraneInfoView
         android:id="@+id/top_crane_view"
         android:layout_width="match_parent"
-        android:layout_weight="1"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+    <lecho.lib.hellocharts.view.LineChartView
+        android:id="@+id/height_graph"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+
+        />
+
+    <lecho.lib.hellocharts.view.LineChartView
+        android:id="@+id/weight_graph"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+         />
 
 
     <LinearLayout
@@ -24,18 +37,18 @@
             android:id="@+id/server_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="http://192.168.1.27:5000"
-            android:hint="Enter server url" />
+            android:hint="Enter server url"
+            android:text="http://192.168.1.27:5000" />
 
         <EditText
             android:id="@+id/crane_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="11"
+            android:layout_marginLeft="10dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:layout_marginLeft="10dp"
-            android:hint="Enter server url" />
+            android:hint="Enter server url"
+            android:text="11" />
 
         <Button
             android:layout_width="wrap_content"
@@ -47,9 +60,9 @@
 
     <Button
         android:id="@+id/start_stop"
-        android:text="start"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="startStop"/>
+        android:onClick="startStop"
+        android:text="start" />
 
 </LinearLayout>

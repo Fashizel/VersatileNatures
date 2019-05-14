@@ -10,6 +10,8 @@ import android.widget.EditText;
 import com.example.myapplication.server.CraneViewController;
 import com.example.myapplication.server.ServerHelper;
 
+import lecho.lib.hellocharts.view.LineChartView;
+
 public class MainActivity extends AppCompatActivity {
 
     private EditText mServerAddress;
@@ -24,7 +26,9 @@ public class MainActivity extends AppCompatActivity {
         mServerAddress = findViewById(R.id.server_id);
         mCraneId = findViewById(R.id.crane_id);
         mServerHelper = new ServerHelper(this);
-        mCraneViewController = new CraneViewController(this, (TopCraneInfoView) findViewById(R.id.top_crane_view), new Handler(Looper.getMainLooper()), mServerHelper);
+        SensorGraphViewsHelper sensorGraphViewsHelper = new SensorGraphViewsHelper((LineChartView) findViewById(R.id.height_graph),
+                (LineChartView) findViewById(R.id.weight_graph));
+        mCraneViewController = new CraneViewController(this, (TopCraneInfoView) findViewById(R.id.top_crane_view), sensorGraphViewsHelper, new Handler(Looper.getMainLooper()), mServerHelper);
     }
 
     public void startStop(View view) {
