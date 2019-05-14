@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.example.myapplication.TopCraneInfoView;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -46,16 +47,15 @@ public class CraneViewController implements ServerHelper.CraneDataListener {
             if (mCurrentTime == NO_TIME) {
                 Log.d(TAG, "First run...");
                 moveToNextCycle();
-                refreshSensorData();
             }
 
             if (shouldMoveFromLastCycle()) {
                 mCycleLoadDatas.remove(0);
                 moveToNextCycle();
-                refreshSensorData();
             }
 
-
+            // No Harm at refreshing this all the time
+            refreshSensorData();
             mTopCraneInfoView.setEventTime(++mCurrentTime);
         } else {
             Toast.makeText(mContext, "End Of Data", Toast.LENGTH_SHORT).show();
@@ -89,14 +89,24 @@ public class CraneViewController implements ServerHelper.CraneDataListener {
 
     private void refreshSensorData() {
         if (!mSensorDatas.isEmpty()) {
-            SensorData sensorData = mSensorDatas.get(0);
-            while (mCurrentTime > sensorData.event_time_stamp && !mSensorDatas.isEmpty()) {
-                mSensorDatas.remove(0);
+            Iterator<SensorData> sensorIter = mSensorDatas.listIterator();
+
+            int removed = 0;
+            while (sensorIter.hasNext()) {
+                SensorData sensorData = sensorIter.next();
+                if(mCurrentTime != sensorData.event_timestamp ) {
+                    sensorIter.remove();
+                    removed++;
+                } else{
+                    break;
+                }
             }
 
-            if(!mSensorDatas.isEmpty()){
-                sensorData = mSensorDatas.get(0);
-                Log.d(TAG, "Setting sensor (" +sensorData + ")");
+            Log.d(TAG, "removed " + removed + " sensor data items");
+
+            if (!mSensorDatas.isEmpty()) {
+                SensorData sensorData = mSensorDatas.get(0);
+                Log.d(TAG, "Setting sensor (" + sensorData + ")");
                 mTopCraneInfoView.setSensorData(sensorData);
             }
         }
@@ -106,13 +116,8 @@ public class CraneViewController implements ServerHelper.CraneDataListener {
     private void tryAskForMore() {
         if (mCycleLoadDatas.size() < MIN_SIZE) {
             long timeToAsk = mCycleLoadDatas.isEmpty() ? mCurrentTime : mCycleLoadDatas.get(mCycleLoadDatas.size() - 1).step_end_time;
-            Log.d(TAG, "Asking for more cycles" + MIN_SIZE + " - " + timeToAsk);
-            mServerHelper.requestCycleData(MIN_SIZE, timeToAsk, this);
-        }
-
-        if (mSensorDatas.size() < MIN_SIZE) {
-            Log.d(TAG, "Asking for more sensor data" + MIN_SIZE + " - " + mCurrentTime);
-            mServerHelper.requestSensorData(MIN_SIZE, mCurrentTime, this);
+            Log.d(TAG, "Asking for more data" + MIN_SIZE + " - " + timeToAsk);
+            mServerHelper.requestData(MIN_SIZE, timeToAsk, this);
         }
     }
 

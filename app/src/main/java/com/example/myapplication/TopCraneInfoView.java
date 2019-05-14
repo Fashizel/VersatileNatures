@@ -24,7 +24,7 @@ public class TopCraneInfoView extends RelativeLayout {
     private TextView mCraneWeight;
 
 
-    public static String[] STEP_NAME = new String[]{"movement toward the load",
+    public static String[] STEP_NAME = new String[]{"NO_STEP", "movement toward the load",
             "load rigging",
             "movement with the load toward the destination",
             "unrigging of the load at the destination"};
@@ -62,7 +62,7 @@ public class TopCraneInfoView extends RelativeLayout {
     public void setSensorData(SensorData sensorData) {
         Picasso.get().load(sensorData.image_url).into(mCraneImage);
         mCraneHeight.setText(sensorData.acc_az + "");
-        mCraneWeight.setText(sensorData.weight +"");
+        mCraneWeight.setText(sensorData.weight + "");
     }
 
     public void setCycleRow(CycleLoadData cycleLoadData) {
