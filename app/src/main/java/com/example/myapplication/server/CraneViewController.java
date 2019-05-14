@@ -59,7 +59,8 @@ public class CraneViewController implements ServerHelper.CraneDataListener {
 
             // No Harm at refreshing this all the time
             refreshSensorData();
-            mTopCraneInfoView.setEventTime(++mCurrentTime);
+            mTopCraneInfoView.setEventTime(mCurrentTime);
+            mCurrentTime += 1000;
         } else {
             Toast.makeText(mContext, "End Of Data", Toast.LENGTH_SHORT).show();
             stop();
@@ -92,15 +93,17 @@ public class CraneViewController implements ServerHelper.CraneDataListener {
 
     private void refreshSensorData() {
         if (!mSensorDatas.isEmpty()) {
+            long currentTimeSeconds = mCurrentTime / 1000;
+
             Iterator<SensorData> sensorIter = mSensorDatas.listIterator();
 
             int removed = 0;
             while (sensorIter.hasNext()) {
                 SensorData sensorData = sensorIter.next();
-                if(mCurrentTime > sensorData.event_timestamp ) {
+                if (currentTimeSeconds > sensorData.event_timestamp / 1000) {
                     sensorIter.remove();
                     removed++;
-                } else{
+                } else {
                     break;
                 }
             }
@@ -109,11 +112,11 @@ public class CraneViewController implements ServerHelper.CraneDataListener {
 
             if (!mSensorDatas.isEmpty()) {
                 SensorData sensorData = mSensorDatas.get(0);
-                if(sensorData.event_timestamp == mCurrentTime) {
+                if (sensorData.event_timestamp / 1000 == currentTimeSeconds) {
                     Log.d(TAG, "Setting sensor (" + sensorData + ")");
                     mTopCraneInfoView.setSensorData(sensorData);
                     mSensorGraphViewsHelper.setCurrentSensorData(mSensorDatas);
-                } else{
+                } else {
                     Log.d(TAG, "Sensor data is ahead of current time");
                 }
             }

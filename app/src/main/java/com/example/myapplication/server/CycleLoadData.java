@@ -3,7 +3,7 @@ package com.example.myapplication.server;
 public class CycleLoadData {
 
     public int crane_id;
-    public int step_end_time;
+    public long step_end_time;
     public long start_time;
     public String load_type_category_name;
     public long step_start_time;
