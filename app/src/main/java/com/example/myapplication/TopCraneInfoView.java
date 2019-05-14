@@ -3,7 +3,6 @@ package com.example.myapplication;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -11,6 +10,9 @@ import android.widget.TextView;
 import com.example.myapplication.server.CycleLoadData;
 import com.example.myapplication.server.SensorData;
 import com.squareup.picasso.Picasso;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class TopCraneInfoView extends RelativeLayout {
 
@@ -28,6 +30,7 @@ public class TopCraneInfoView extends RelativeLayout {
             "load rigging",
             "movement with the load toward the destination",
             "unrigging of the load at the destination"};
+    private SimpleDateFormat mSimpleDateFormat;
 
     public TopCraneInfoView(Context context) {
         super(context);
@@ -56,6 +59,7 @@ public class TopCraneInfoView extends RelativeLayout {
         mLoadType = findViewById(R.id.crane_load_type);
         mCraneHeight = findViewById(R.id.crane_height);
         mCraneWeight = findViewById(R.id.crane_weight);
+        mSimpleDateFormat = new SimpleDateFormat("hh:mm:ss a");
     }
 
 
@@ -75,6 +79,7 @@ public class TopCraneInfoView extends RelativeLayout {
 
 
     public void setEventTime(long time) {
-        mEventTime.setText(time + "");
+        Date date = new Date(time);
+        mEventTime.setText(mSimpleDateFormat.format(date));
     }
 }
