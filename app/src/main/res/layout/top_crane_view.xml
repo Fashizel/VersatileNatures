@@ -7,14 +7,15 @@
     <ImageView
         android:id="@+id/crane_image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:scaleType="fitXY" />
 
     <LinearLayout
         android:id="@+id/step_name_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -23,13 +24,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="01"
-            android:textSize="50sp" />
+            android:textColor="@color/colorAccent"
+            android:textSize="30sp" />
 
         <TextView
             android:id="@+id/step_name"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
-            android:text="step_name" />
+            android:gravity="center"
+            android:ellipsize="middle"
+            android:text="step_name"
+            android:textColor="@color/colorAccent" />
 
     </LinearLayout>
 
@@ -39,7 +44,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignRight="@id/step_name_container"
-        android:text="56" />
+        android:text="56"
+        android:textStyle="bold"
+        android:textColor="@color/colorAccent2" />
 
 
     <TextView
@@ -49,41 +56,87 @@
         android:layout_alignParentRight="true"
         android:layout_margin="20dp"
         android:text="10:00 pm"
+        android:textColor="@color/colorAccent2"
         android:textSize="20sp" />
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="5dp"
         android:layout_centerInParent="true">
 
-        <TextView
-            android:id="@+id/crane_load_type"
-            android:layout_width="wrap_content"
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:layout_height="wrap_content"
-            android:text="load: type"/>
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/crane_weight"
-            android:layout_width="wrap_content"
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/load" />
+
+            <TextView
+                android:id="@+id/crane_load_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:gravity="center"
+                android:src="@drawable/load"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:text="load: type" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/weight" />
+
+            <TextView
+                android:id="@+id/crane_weight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:text="load: type" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="load: type"/>
-
-
-        <TextView
-            android:id="@+id/crane_height"
-            android:layout_width="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:layout_height="wrap_content"
-            android:text="load: type"/>
+            android:orientation="vertical">
 
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/height" />
 
+            <TextView
+                android:id="@+id/crane_height"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:text="load: type" />
 
+        </LinearLayout>
     </LinearLayout>
 
 
