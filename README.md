@@ -1,6 +1,13 @@
 # Crane
 Crane was made as an home assignment for a VersatileNatures 
-  
+
+# How to run the server?
+
+In this repository under the 'Server' folder you'll find everything you need in order to run the server. 
+ - Run 'pip install -r requierments.txt'
+ - run 'python crane_server.py'
+    
+    
 # How to Install?
 
   - You may install the apk from app/release/app-release.apk
