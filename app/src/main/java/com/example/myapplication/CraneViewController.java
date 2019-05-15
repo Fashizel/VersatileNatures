@@ -38,7 +38,7 @@ public class CraneViewController implements ServerHelper.CraneDataListener {
     private final Handler mUiHandler;
     private boolean mNeedsToStart;
 
-    public CraneViewController(Context context, TopCraneInfoView topCraneInfoView, SensorGraphViewsHelper sensorGraphViewsHelper, Handler uiHandler, ServerHelper serverHelper) {
+    CraneViewController(Context context, TopCraneInfoView topCraneInfoView, SensorGraphViewsHelper sensorGraphViewsHelper, Handler uiHandler, ServerHelper serverHelper) {
         mUiHandler = uiHandler;
         mTopCraneInfoView = topCraneInfoView;
         mContext = context;
@@ -135,7 +135,7 @@ public class CraneViewController implements ServerHelper.CraneDataListener {
         }
     }
 
-    public void startStop() {
+    void startStop() {
         if (mTimer != null) {
             stop();
         } else {

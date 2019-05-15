@@ -40,6 +40,9 @@ public class ServerHelper {
         Log.d(TAG, "Setting server address to " + address + " and crane_id " + mCraneId);
     }
 
+    public String getServerAddress() {
+        return mServerAddress;
+    }
 
     public void requestData(int amount, long minimumTime, final CraneDataListener listener) {
         final Gson gson = new GsonBuilder().create();
