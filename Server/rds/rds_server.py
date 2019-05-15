@@ -1,4 +1,3 @@
-import time
 from datetime import datetime
 
 import mysql.connector
@@ -6,20 +5,10 @@ import mysql.connector
 KEY_EVENT_TIMESTAMP = 'event_timestamp'
 
 
-def post_process_sensor_data(raw_sensor_data, crane_id, start_time, end_time):
-    empty_sensor_item = {
-        'id': -1,
-        'crane_id': crane_id,
-        'image_url': None,
-        'weight': 0,
-        'weight_raw': 0,
-        'acc_ax': 0,
-        'acc_ay': 0,
-        'acc_az': 0,
-        'acc_raw': None,
-        'event_timestamp': start_time
-    }
-
+def post_process_sensor_data(raw_sensor_data):
+    """
+    Add missing data and perform smoothing on sensor data
+    """
     i = 0
     new_sensor_data = []
     while i < len(raw_sensor_data):
@@ -36,13 +25,16 @@ def post_process_sensor_data(raw_sensor_data, crane_id, start_time, end_time):
     print("Added {} missing sensor data".format(len(new_sensor_data) - len(raw_sensor_data)))
 
     for i in range(len(new_sensor_data) - 1):
-        compute_mean_for_key(new_sensor_data, i, 'weight')
-        compute_mean_for_key(new_sensor_data, i, 'acc_az')
+        moving_average(new_sensor_data, i, 'weight')
+        moving_average(new_sensor_data, i, 'acc_az')
 
     return new_sensor_data
 
 
-def compute_mean_for_key(raw_sensor_data, index, key):
+def moving_average(raw_sensor_data, index, key):
+    """
+    Perform moving average on a key of type number, up to 2 look-back and 2 look-forward
+    """
     mean = get_value(raw_sensor_data[index], key, 0)
     size = 1.0
 
@@ -87,6 +79,11 @@ class RdsServer:
         pass
 
     def get_data(self, crane_id, minimun_epoch, limit):
+
+        """
+        This method will return limit amount of cycles with their corresponding sensor data
+        """
+
         a = datetime.now()
 
         cnx = mysql.connector.connect(user='dev_test', password='dev_test',
@@ -114,7 +111,7 @@ class RdsServer:
         time_column = "event_timestamp"
         return post_process_sensor_data(
             self.get_entries_since_time(cursor, crane_id, limit, minimum_epoch, time_column, view,
-                                        end_time=maximun_epoch), crane_id, minimum_epoch, maximun_epoch)
+                                        end_time=maximun_epoch))
 
     def get_cycles(self, cursor, crane_id, minimum_epoch, limit):
         view = 'view_cycles_loadtype_ex'
