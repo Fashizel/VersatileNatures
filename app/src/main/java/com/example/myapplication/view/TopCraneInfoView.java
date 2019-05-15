@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.myapplication.R;
 import com.example.myapplication.server.CycleLoadData;
 import com.example.myapplication.server.SensorData;
 import com.squareup.picasso.Picasso;

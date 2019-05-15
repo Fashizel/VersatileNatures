@@ -7,8 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 
-import com.example.myapplication.server.CraneViewController;
 import com.example.myapplication.server.ServerHelper;
+import com.example.myapplication.view.SensorGraphViewsHelper;
+import com.example.myapplication.view.TopCraneInfoView;
 
 import lecho.lib.hellocharts.view.LineChartView;
 

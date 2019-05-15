@@ -1,12 +1,15 @@
-package com.example.myapplication.server;
+package com.example.myapplication;
 
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.myapplication.SensorGraphViewsHelper;
-import com.example.myapplication.TopCraneInfoView;
+import com.example.myapplication.server.CycleLoadData;
+import com.example.myapplication.server.SensorData;
+import com.example.myapplication.server.ServerHelper;
+import com.example.myapplication.view.SensorGraphViewsHelper;
+import com.example.myapplication.view.TopCraneInfoView;
 
 import java.util.ArrayList;
 import java.util.Iterator;

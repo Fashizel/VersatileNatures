@@ -8,7 +8,7 @@
     tools:context=".MainActivity">
 
 
-    <com.example.myapplication.TopCraneInfoView
+    <com.example.myapplication.view.TopCraneInfoView
         android:id="@+id/top_crane_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
